@@ -8,7 +8,6 @@ from email.mime.text import MIMEText
 from reportlab.pdfgen import canvas
 from io import BytesIO
 from werkzeug.security import generate_password_hash, check_password_hash
-import config
 
 #load trained model
 model = None
