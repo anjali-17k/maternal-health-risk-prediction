@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maternal Health Platform</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --rose: #c2185b;
+            --rose-light: #f48fb1;
+            --teal: #00695c;
+            --navy: #1a237e;
+            --amber: #f57c00;
+            --cream: #fff8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+            background-image: url("/static/images/1.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -200px; right: -200px;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(194,24,91,0.08), transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -200px; left: -200px;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(0,105,92,0.07), transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 960px;
+        }
+
+        .brand {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .brand-icon {
+            width: 64px; height: 64px;
+            background: linear-gradient(135deg, var(--rose), var(--rose-light));
+            border-radius: 18px;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 28px;
+            box-shadow: 0 8px 24px rgba(194,24,91,0.25);
+        }
+
+        h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 2.8rem;
+            color: #1a0a0f;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+
+        h1 em {
+            font-style: italic;
+            color: var(--rose);
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.05rem;
+            font-weight: 400;
+        }
+
+        .roles-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .role-card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px 24px;
+            text-decoration: none;
+            border: 1.5px solid #f0e8ea;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+
+        .role-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.1);
+            border-color: transparent;
+        }
+
+        .role-card.pregnant:hover { box-shadow: 0 12px 32px rgba(194,24,91,0.15); }
+        .role-card.doctor:hover { box-shadow: 0 12px 32px rgba(0,105,92,0.15); }
+        .role-card.clinic:hover { box-shadow: 0 12px 32px rgba(26,35,126,0.15); }
+        .role-card.admin:hover { box-shadow: 0 12px 32px rgba(245,124,0,0.15); }
+
+        .role-icon {
+            width: 52px; height: 52px;
+            border-radius: 14px;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .pregnant .role-icon { background: #fce4ec; }
+        .doctor .role-icon { background: #e0f2f1; }
+        .clinic .role-icon { background: #e8eaf6; }
+        .admin .role-icon { background: #fff3e0; }
+
+        .role-text h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1a0a0f;
+            margin-bottom: 3px;
+        }
+
+        .role-text p {
+            font-size: 0.82rem;
+            color: #888;
+            line-height: 1.4;
+        }
+
+        .role-arrow {
+            margin-left: auto;
+            color: #ccc;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .role-card:hover .role-arrow { 
+            color: #999; 
+            transform: translateX(3px); 
+        }
+
+        .admin-row {
+            display: grid;
+            grid-template-columns: 1fr;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 20px 0 16px;
+            color: #bbb;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #ececec;
+        }
+
+        .footer-text {
+            text-align: center;
+            color: #aaa;
+            font-size: 0.82rem;
+            margin-top: 32px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="brand">
+            <div class="brand-icon">🌸</div>
+            <h1>Maternal <em>Health</em> Platform</h1>
+            <p class="subtitle">AI-powered prenatal care — select your role to continue</p>
+        </div>
+
+        <div class="roles-grid">
+            <a href="{{ url_for('login', role='pregnant') }}" class="role-card pregnant">
+                <div class="role-icon">🤰</div>
+                <div class="role-text">
+                    <h3>Pregnant Women</h3>
+                    <p>Track health, book appointments & view results</p>
+                </div>
+                <i class="fas fa-chevron-right role-arrow"></i>
+            </a>
+
+            <a href="{{ url_for('login', role='doctor') }}" class="role-card doctor">
+                <div class="role-icon">👨‍⚕️</div>
+                <div class="role-text">
+                    <h3>Doctors</h3>
+                    <p>Manage consultations & patient records</p>
+                </div>
+                <i class="fas fa-chevron-right role-arrow"></i>
+            </a>
+
+            <a href="{{ url_for('login', role='clinic') }}" class="role-card clinic">
+                <div class="role-icon">🏥</div>
+                <div class="role-text">
+                    <h3>Hospital / Clinic</h3>
+                    <p>Manage doctors and clinic operations</p>
+                </div>
+                <i class="fas fa-chevron-right role-arrow"></i>
+            </a>
+
+            <a href="{{ url_for('login', role='admin') }}" class="role-card admin">
+                <div class="role-icon">🛡️</div>
+                <div class="role-text">
+                    <h3>System Admin</h3>
+                    <p>Central management & analytics</p>
+                </div>
+                <i class="fas fa-chevron-right role-arrow"></i>
+            </a>
+        </div>
+
+        <p class="footer-text">Centralized Maternal Health Management System &mdash; Powered by AI Risk Prediction</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Doctors</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-image: url("/static/images/12.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 32px 24px;
+        }
+
+        .page-header {
+            max-width: 90%;
+            margin: 0 auto 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .page-header h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.8rem;
+            color: #1a237e;
+        }
+
+        .page-header p { 
+            color: #5c6bc0; 
+            font-size: 0.88rem; 
+            margin-top: 3px; 
+        }
+
+        .btn-back {
+            padding: 9px 18px;
+            border-radius: 10px;
+            font-size: 0.83rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: white;
+            color: #5c6bc0;
+            box-shadow: 0 2px 8px rgba(26,35,126,0.08);
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-back:hover { 
+            background: #e8eaf6; 
+            color: #1a237e; 
+        }
+
+        .flash {
+            max-width: 90%;
+            margin: 0 auto 20px;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-size: 0.88rem;
+            font-weight: 500;
+        }
+
+        .flash.success { 
+            background: #e8f5e9; 
+            color: #2e7d32; 
+            border-left: 4px solid #43a047; 
+        }
+
+        .flash.info { 
+            background: #e3f2fd; 
+            color: #1565c0; 
+            border-left: 4px solid #1e88e5; 
+        }
+
+        .section {
+            max-width: 90%;
+            margin: 0 auto 24px;
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #7986cb;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pending-dot {
+            width: 8px; 
+            height: 8px;
+            background: #fbbf24;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; } 50% { opacity: 0.4; }
+        }
+
+        .doctor-card {
+            background: white;
+            border-radius: 14px;
+            padding: 18px 22px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 12px rgba(26,35,126,0.06);
+            border: 1.5px solid #e8eaf6;
+        }
+
+        .doctor-card.pending-card { 
+            border-color: #ffe082; 
+            background: #fffde7; 
+        }
+
+        .doctor-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .avatar {
+            width: 44px; 
+            height: 44px;
+            border-radius: 12px;
+            background: #e8eaf6;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .pending-card .avatar { background: #fff9c4; }
+
+        .doctor-name { 
+            font-size: 0.95rem; 
+            font-weight: 600; 
+            color: #1a237e; 
+        }
+
+        .doctor-email { 
+            font-size: 0.8rem; 
+            color: #9fa8da; 
+            margin-top: 2px; 
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .badge-approved { 
+            background: #e8f5e9; 
+            color: #2e7d32; 
+        }
+
+        .badge-pending { 
+            background: #fff9c4; 
+            color: #f57f17; 
+        }
+
+        .actions { 
+            display: flex;
+            gap: 8px; 
+            flex-shrink: 0; 
+        }
+
+        .btn-approve {
+            padding: 7px 14px;
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1.5px solid #a5d6a7;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-approve:hover { 
+            background: #43a047; 
+            color: white; 
+            border-color: #43a047; 
+        }
+
+        .btn-remove {
+            padding: 7px 14px;
+            background: #fce4ec;
+            color: #c62828;
+            border: 1.5px solid #f48fb1;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-remove:hover { 
+            background: #e53935; 
+            color: white;
+            border-color: #e53935; 
+        }
+
+        .empty-state {
+            background: white;
+            border-radius: 14px;
+            padding: 32px;
+            text-align: center;
+            color: #9fa8da;
+            border: 1.5px dashed #c5cae9;
+            font-size: 0.88rem;
+        }
+    </style>
+</head>
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for cat, msg in messages %}
+        <div class="flash {{ cat }}">{{ msg }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    <div class="page-header">
+        <div>
+            <h1>👨‍⚕️ Manage Doctors</h1>
+            <p>Approve pending requests and manage your clinic's doctors</p>
+        </div>
+        <a href="{{ url_for('dashboard') }}" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Dashboard
+        </a>
+    </div>
+
+    {% set pending_docs = doctors | selectattr('3', 'equalto', 'pending') | list %}
+    {% set approved_docs = doctors | selectattr('3', 'equalto', 'approved') | list %}
+
+    <!--pending section-->
+    <div class="section">
+        <div class="section-label">
+            <div class="pending-dot"></div>
+            Pending Requests ({{ pending_docs | length }})
+        </div>
+
+        {% if pending_docs %}
+            {% for d in doctors if d[3] == 'pending' %}
+            <div class="doctor-card pending-card">
+                <div class="doctor-info">
+                    <div class="avatar">⏳</div>
+                    <div>
+                        <div class="doctor-name">Dr. {{ d[1] }}</div>
+                        <div class="doctor-email">{{ d[2] or 'No email provided' }}</div>
+                    </div>
+                </div>
+                <div class="actions">
+                    <span class="status-badge badge-pending">Pending</span>
+                    <form method="POST" action="{{ url_for('clinic_approve_doctor', dc_id=d[0]) }}">
+                        <button type="submit" class="btn-approve"><i class="fas fa-check"></i> Approve</button>
+                    </form>
+                    <form method="POST" action="{{ url_for('clinic_remove_doctor', dc_id=d[0]) }}"
+                          onsubmit="return confirm('Reject and remove this doctor request?')">
+                        <button type="submit" class="btn-remove"><i class="fas fa-times"></i> Reject</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">No pending requests</div>
+        {% endif %}
+    </div>
+
+    <!--approved section-->
+    <div class="section">
+        <div class="section-label">
+            <i class="fas fa-check-circle" style="color:#43a047;"></i>
+            Approved Doctors ({{ approved_docs | length }})
+        </div>
+
+        {% if approved_docs %}
+            {% for d in doctors if d[3] == 'approved' %}
+            <div class="doctor-card">
+                <div class="doctor-info">
+                    <div class="avatar">👨‍⚕️</div>
+                    <div>
+                        <div class="doctor-name">Dr. {{ d[1] }}</div>
+                        <div class="doctor-email">{{ d[2] or 'No email provided' }}</div>
+                    </div>
+                </div>
+                <div class="actions">
+                    <span class="status-badge badge-approved">Approved</span>
+                    <form method="POST" action="{{ url_for('clinic_remove_doctor', dc_id=d[0]) }}"
+                          onsubmit="return confirm('Remove Dr. {{ d[1] }} from your clinic?')">
+                        <button type="submit" class="btn-remove"><i class="fas fa-user-minus"></i> Remove</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">No approved doctors yet</div>
+        {% endif %}
+    </div>
+</body>
+</html>

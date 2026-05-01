@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pregnant Women Support Chatbot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Poppins', sans-serif; 
+        }
+        
+        body {
+            display: flex; 
+            flex-direction: column; 
+            justify-content: flex-start;
+            align-items: stretch; 
+            min-height: 100vh;
+            background: linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7));
+            padding: 0px;
+            margin: 0;
+        }
+        
+        .chat-container {
+            width: 100%; 
+            max-width: 100%; 
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: rgba(255,255,255,0.9); 
+            border-radius: 0;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); 
+            backdrop-filter: blur(10px); 
+            border: 1px solid rgba(255,255,255,0.2); 
+            margin: 0;
+        }
+        
+        .chat-header { 
+            background: linear-gradient(135deg, #8e2de2, #4a00e0); 
+            color: white; 
+            padding: 20px; 
+            text-align: center; 
+            position: relative; }
+        
+        .chat-header h2 { 
+            font-size: 1.5rem; 
+            font-weight: 600; 
+            margin-bottom: 5px; }
+        
+        .chat-header p { 
+            font-size: 0.9rem; 
+            opacity: 0.8; }
+        
+        .chat-header .status { 
+            position: absolute; 
+            top: 20px; 
+            right: 20px; 
+            display: flex; 
+            align-items: center; 
+            font-size: 0.8rem; }
+        
+        .chat-header .status .dot { 
+            width: 10px; 
+            height: 10px; 
+            background-color: #4ade80; 
+            border-radius: 50%; 
+            margin-right: 5px; 
+            animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+        
+        #chatbox { 
+            flex: 1; 
+            min-height: 0; 
+            max-height: none; 
+            padding: 20px; 
+            overflow-y: auto; 
+            background-color: #f8f9fa; }
+        
+        #chatbox::-webkit-scrollbar { width: 6px; }
+        
+        #chatbox::-webkit-scrollbar-track { background: #f1f1f1; }
+        
+        #chatbox::-webkit-scrollbar-thumb { 
+            background: #888; 
+            border-radius: 3px; }
+        
+        .message { 
+            margin-bottom: 15px; 
+            display: flex; 
+            animation: fadeIn 0.3s ease-in-out; }
+        @keyframes 
+        fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .message.user { justify-content: flex-end; }
+        .message.bot { justify-content: flex-start; }
+        
+        .message-content { 
+            max-width: 80%; 
+            padding: 12px 16px; 
+            border-radius: 18px; 
+            position: relative; 
+            line-height: 1.6; 
+            font-size: 0.9rem; }
+        
+        .message.user .message-content { 
+            background: linear-gradient(135deg, #667eea, #764ba2); 
+            color: white; 
+            border-bottom-right-radius: 5px; }
+        
+        .message.bot .message-content { 
+            background-color: white; 
+            color: #333; 
+            border-bottom-left-radius: 5px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        
+        .message-time { 
+            font-size: 0.7rem; 
+            color: #888; 
+            margin-top: 4px; 
+            text-align: right; }
+        
+        .message.bot .message-time { text-align: left; }
+
+        .typing { 
+            color: #999; 
+            font-style: italic; 
+            font-size: 0.85rem; }
+        
+        .chat-input-container { 
+            display: flex; 
+            padding: 15px; 
+            background-color: white; 
+            border-top: 1px solid #eee; }
+        
+        #userInput { 
+            flex: 1; 
+            padding: 12px 16px; 
+            border: 1px solid #ddd; 
+            border-radius: 25px; 
+            outline: none; 
+            font-size: 0.95rem; 
+            transition: border 0.3s; }
+        #userInput:focus { border-color: #667eea; }
+        
+        #sendBtn { 
+            margin-left: 10px; 
+            width: 45px; 
+            height: 45px; 
+            border: none; 
+            border-radius: 50%; 
+            background: linear-gradient(135deg, #667eea, #764ba2); 
+            color: white; 
+            cursor: pointer; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            transition: transform 0.2s, box-shadow 0.2s; }
+        
+        #sendBtn:hover { 
+            transform: scale(1.05); 
+            box-shadow: 0 5px 15px rgba(102,126,234,0.4); }
+            
+        #sendBtn:active { transform: scale(0.95); }
+        
+        #sendBtn:disabled { 
+            opacity: 0.6; 
+            cursor: not-allowed; 
+            transform: none; }
+        
+        .suggestions { 
+            padding: 10px 15px; 
+            background-color: #f8f9fa; 
+            border-top: 1px solid #eee; 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 8px; }
+        
+        .suggestion-chip { 
+            background-color: white; 
+            border: 1px solid #ddd;
+            border-radius: 15px; 
+            padding: 5px 12px; 
+            font-size: 0.8rem; 
+            cursor: pointer; 
+            transition: background-color 0.2s, color 0.2s; }
+        
+        .suggestion-chip:hover { 
+            background-color: #667eea; 
+            color: white; }
+        
+        .footer { 
+            text-align: center; 
+            padding: 10px; 
+            font-size: 0.7rem; 
+            color: #777; 
+            background-color: #f8f9fa; }
+        
+        .back-btn { 
+            display: block; 
+            width: 100%; 
+            margin: 15px 0 0 auto; 
+            text-align: center; 
+            padding: 15px; 
+            background: linear-gradient(135deg, #8e2de2, #4a00e0); 
+            color: white; 
+            border-radius: 10px; 
+            font-size: 0.9rem; 
+            font-weight: 600; 
+            text-decoration: none; 
+            transition: all 0.3s ease; 
+            white-space: nowrap;
+            border-radius: 0;
+         }
+        
+        .back-btn:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 10px 20px rgba(142,45,226,0.3); }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>Maternity Support</h2>
+            <p>Your personal pregnancy assistant</p>
+            <div class="status"><div class="dot"></div><span>Online</span></div>
+        </div>
+        <div id="chatbox"></div>
+        <div class="suggestions">
+            <div class="suggestion-chip" onclick="sendSuggestion('What symptoms are normal in early pregnancy?')">Early symptoms</div>
+            <div class="suggestion-chip" onclick="sendSuggestion('What foods should I eat during pregnancy?')">Nutrition</div>
+            <div class="suggestion-chip" onclick="sendSuggestion('Is exercise safe during pregnancy?')">Exercise</div>
+            <div class="suggestion-chip" onclick="sendSuggestion('How do I book an appointment?')">Appointments</div>
+            <div class="suggestion-chip" onclick="sendSuggestion('What are warning signs I should watch for?')">Warning signs</div>
+            <div class="suggestion-chip" onclick="sendSuggestion('What is high risk pregnancy?')">High Risk</div>
+            <div class="suggestion-chip" onclick="sendSuggestion('How to manage stress during pregnancy?')">Stress</div>
+            <div class="suggestion-chip" onclick="sendSuggestion('When should I see a doctor?')">Doctor visit</div>
+        </div>
+        <div class="chat-input-container">
+            <input type="text" id="userInput" placeholder="Ask something about your pregnancy..." autofocus />
+            <button id="sendBtn"><i class="fas fa-paper-plane"></i></button>
+        </div>
+        <div class="footer">Maternity Support Chatbot &mdash; Keyword-Based Assistant</div>
+
+    <a href="{{ url_for('dashboard') }}" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+</div>
+    <script>
+        const chatbox = document.getElementById('chatbox');
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+
+//KEYWORD RESPONSE DATABASE
+        const responses = [
+            {
+                keywords: ['hello','hi','hey','greet','good morning','good afternoon','good evening'],
+                reply: "Hello! 👋 Welcome to Maternity Support!\n\nI'm here to help you with questions about:\n• Pregnancy symptoms & health\n• Nutrition & diet\n• Exercise & wellness\n• Baby development\n• Warning signs\n• Appointments & care\n\nWhat would you like to know today? 🌸"
+            },
+            {
+                keywords: ['symptom','early pregnancy','first trimester','sign of pregnancy','nausea','morning sickness','vomiting','fatigue','tired'],
+                reply: "🤰 Common Early Pregnancy Symptoms:\n\n• Morning sickness (nausea/vomiting) — peaks around week 8–10\n• Fatigue and feeling very tired\n• Frequent urination\n• Tender or swollen breasts\n• Food cravings or aversions\n• Mood swings\n• Mild cramping or spotting (implantation)\n• Bloating and constipation\n\nMost of these are normal! If symptoms are severe, consult your doctor. 💊"
+            },
+            {
+                keywords: ['food','eat','diet','nutrition','meal','vitamin','folate','folic acid','iron','calcium'],
+                reply: "🥗 Pregnancy Nutrition Guide:\n\n✅ Foods to eat:\n• Leafy greens (spinach, kale) — rich in folate\n• Dairy products — calcium & protein\n• Lean meats & fish — iron & omega-3\n• Whole grains — fiber & energy\n• Fruits (especially citrus) — vitamin C\n• Legumes (lentils, beans) — protein & iron\n• Eggs — protein & choline\n\n❌ Foods to avoid:\n• Raw fish / sushi\n• Unpasteurized cheese\n• Excess caffeine (limit to 200mg/day)\n• Alcohol (completely avoid)\n\nStay hydrated — aim for 8–10 glasses of water daily! 💧"
+            },
+            {
+                keywords: ['exercise','workout','physical activity','yoga','walk','swimming','safe to exercise','gym'],
+                reply: "🏃‍♀️ Exercise During Pregnancy:\n\nYes, exercise is generally safe and beneficial!\n\n✅ Recommended activities:\n• Walking (30 mins daily is ideal)\n• Prenatal yoga\n• Swimming & water aerobics\n• Light stretching\n• Stationary cycling\n\n⚠️ Avoid:\n• Contact sports\n• High-impact jumping\n• Lying flat on back (after 1st trimester)\n• Activities with fall risk\n\n🛑 Stop and call your doctor if you feel chest pain, dizziness, vaginal bleeding, or severe headache.\n\nAlways consult your healthcare provider before starting any new exercise! 💪"
+            },
+            {
+                keywords: ['appointment','book','schedule','visit','checkup','clinic','doctor visit'],
+                reply: "📅 Booking an Appointment:\n\nYou can book right here in the system!\n\n1. Go to your Dashboard\n2. Click on 'Book Appointment'\n3. Select your preferred doctor\n4. Choose a clinic near you\n5. Pick a date and time\n6. Confirm your booking\n\n📋 Recommended checkup schedule:\n• Weeks 4–28: Monthly visits\n• Weeks 28–36: Every 2 weeks\n• Weeks 36–birth: Weekly visits\n\nGo back to your dashboard and use the appointment section! 🏥"
+            },
+            {
+                keywords: ['warning','danger','emergency','urgent','serious','alarming','bleeding','severe pain','warning sign'],
+                reply: "🚨 Pregnancy Warning Signs — Seek Immediate Help!\n\n🔴 Go to the hospital immediately for:\n• Heavy vaginal bleeding\n• Severe abdominal or pelvic pain\n• Sudden severe headache\n• Vision changes (blurring, flashes)\n• Severe swelling of face/hands\n• High fever (above 38°C)\n• Baby's movements significantly reduced or stopped\n\n🟡 Call your doctor soon for:\n• Mild but persistent headaches\n• Light spotting\n• Painful urination\n• Vomiting that won't stop\n\nYour health and baby's safety come first — don't hesitate to seek help! 💗"
+            },
+            {
+                keywords: ['high risk','risk level','moderate risk','low risk','risk prediction','my risk','what does risk mean'],
+                reply: "📊 Understanding Your Risk Level:\n\n🔴 High Risk:\n• Requires immediate medical attention\n• Monitor blood pressure & blood sugar closely\n• Frequent checkups needed\n\n🟡 Moderate Risk:\n• Regular checkups every 2 weeks\n• Follow prescribed medications\n• Moderate exercise, manage stress\n\n🟢 Low Risk:\n• Monthly checkups are usually sufficient\n• Continue healthy habits\n\nRisk is calculated based on: Age, Blood Pressure, Blood Sugar, Body Temperature, and Heart Rate.\n\nCheck your latest results on the 'My Results' page! 📋"
+            },
+            {
+                keywords: ['stress','anxiety','mental health','depression','mood','emotional','overwhelmed','sad','worry','calm'],
+                reply: "🧘‍♀️ Managing Stress During Pregnancy:\n\n💆 Relaxation techniques:\n• Deep breathing exercises\n• Prenatal yoga or meditation\n• Gentle walks in nature\n• Warm (not hot) baths\n\n💬 Talk about it:\n• Share feelings with your partner or family\n• Join a pregnancy support group\n• Consider speaking to a counselor\n\n🌙 Self-care tips:\n• Get 7–9 hours of sleep\n• Limit screen time before bed\n• Avoid stressful environments\n\n⚠️ If you feel persistently sad or hopeless, please speak to your doctor — perinatal depression is real and treatable. You are not alone! 💗"
+            },
+            {
+                keywords: ['blood pressure','hypertension','bp','systolic','diastolic','preeclampsia'],
+                reply: "💓 Blood Pressure During Pregnancy:\n\nNormal BP: below 120/80 mmHg\n\n⚠️ High BP (140/90 or higher) can lead to preeclampsia.\n\n🔴 Signs of preeclampsia:\n• Severe headache\n• Vision changes\n• Swelling in face/hands\n• Upper abdominal pain\n\n✅ How to manage:\n• Reduce salt intake\n• Avoid caffeine\n• Rest and reduce stress\n• Monitor BP regularly\n• Take medications as prescribed\n\nAlways report high BP readings to your doctor immediately! 🏥"
+            },
+            {
+                keywords: ['blood sugar','diabetes','gestational diabetes','glucose','bs','sugar level'],
+                reply: "🩸 Blood Sugar During Pregnancy:\n\nNormal fasting blood sugar: 70–95 mg/dL\n\n⚠️ Signs of gestational diabetes:\n• Unusual thirst\n• Frequent urination\n• Fatigue\n• Blurred vision\n\n✅ Management tips:\n• Follow a low-sugar, low-GI diet\n• Exercise regularly (walking is great!)\n• Monitor blood sugar as advised\n• Take medications/insulin if prescribed\n\n🥗 Prefer: Whole grains, vegetables, legumes, lean proteins\n🚫 Limit: Sweets, sugary drinks, white bread, white rice\n\nYour glucose levels are tracked in your health entry results. 📊"
+            },
+            {
+                keywords: ['baby','fetal','development','baby movement','kick','trimester','week','fetus','growth'],
+                reply: "👶 Baby Development Overview:\n\n🌱 First Trimester (Weeks 1–12):\n• Heart starts beating at ~week 6\n• All major organs begin forming\n• Baby is ~6cm by week 12\n\n🌿 Second Trimester (Weeks 13–26):\n• First movements (quickening) ~week 18–20\n• Baby can hear sounds\n• Gender can be identified by week 20\n\n🌸 Third Trimester (Weeks 27–40):\n• Baby gains most weight now\n• Lungs mature for breathing\n• Baby settles into birth position\n\n📌 Tip: Count kicks daily from week 28. Less than 10 kicks in 2 hours → contact your doctor!"
+            },
+            {
+                keywords: ['sleep','rest','insomnia','sleeping position','cant sleep','can\'t sleep'],
+                reply: "😴 Sleep Tips During Pregnancy:\n\n✅ Best sleeping positions:\n• Sleep on your LEFT side (best for blood flow to baby)\n• Use a pregnancy pillow for support\n• Elevate feet slightly to reduce swelling\n\n❌ Avoid sleeping flat on your back after 20 weeks.\n\n💤 Tips for better sleep:\n• Stick to a regular schedule\n• Avoid heavy meals before bed\n• Limit fluids in the evening\n• Keep your bedroom cool and dark\n• Try light stretching before bed\n\nAim for 8–9 hours of sleep per night! 🌙"
+            },
+            {
+                keywords: ['water','hydration','drink','fluid'],
+                reply: "💧 Hydration During Pregnancy:\n\n✅ Recommended: 8–10 glasses of water per day\n\nBenefits of good hydration:\n• Reduces swelling and constipation\n• Prevents urinary tract infections (UTIs)\n• Supports amniotic fluid levels\n• Reduces headaches and fatigue\n\n📌 Tips:\n• Carry a water bottle always\n• Add lemon or cucumber for flavor\n• Eat water-rich fruits (watermelon, cucumber)\n• Reduce caffeinated drinks\n\nSigns of dehydration: dark urine, dizziness, headache, dry mouth — drink water immediately! 🚰"
+            },
+            {
+                keywords: ['weight','gain weight','weight gain','bmi','overweight'],
+                reply: "⚖️ Healthy Weight Gain During Pregnancy:\n\n📊 Recommended gain by BMI:\n• Underweight (BMI <18.5): 13–18 kg\n• Normal weight (BMI 18.5–24.9): 11–16 kg\n• Overweight (BMI 25–29.9): 7–11 kg\n• Obese (BMI ≥30): 5–9 kg\n\n📅 Typical pattern:\n• 1st trimester: 1–2 kg total\n• 2nd & 3rd trimester: ~0.5 kg per week\n\n✅ Healthy tips:\n• Eat nutrient-dense foods, not empty calories\n• Don't eat for two — just eat well!\n• Stay active with light exercise\n\nDiscuss your target weight with your doctor. 🩺"
+            },
+            {
+                keywords: ['heartrate','heart rate','pulse','palpitation','heart beat','fast heart'],
+                reply: "❤️ Heart Rate During Pregnancy:\n\nNormal resting heart rate: 60–100 bpm\nDuring pregnancy, it may increase by 10–20 bpm — this is normal!\n\n⚠️ When to be concerned:\n• Persistent heart rate above 100 bpm at rest\n• Palpitations with dizziness or chest pain\n• Irregular heartbeat\n\n✅ Tips to keep heart healthy:\n• Stay hydrated\n• Avoid excessive caffeine\n• Rest and manage stress\n• Gentle daily exercise\n\nReport any unusual heart symptoms to your doctor promptly! 🏥"
+            },
+            {
+                keywords: ['vaccine','vaccination','flu shot','injection','immunization'],
+                reply: "💉 Vaccines During Pregnancy:\n\n✅ Recommended vaccines:\n• Flu (influenza) vaccine — safe in any trimester\n• Tdap (whooping cough) — recommended at 27–36 weeks\n• COVID-19 vaccine — consult your doctor\n\n❌ Avoid live vaccines during pregnancy (e.g. MMR, chickenpox)\n\nVaccines protect both you AND your baby by passing antibodies through the placenta. Always discuss with your doctor before getting any vaccine! 🏥"
+            },
+            {
+                keywords: ['doctor','when to see','consult','should i go','physician'],
+                reply: "🩺 When Should You See a Doctor?\n\n📋 Routine visits:\n• As soon as you find out you're pregnant\n• Monthly until week 28\n• Every 2 weeks from week 28–36\n• Weekly from week 36 until birth\n\n🚨 See your doctor immediately if you have:\n• Heavy bleeding\n• Severe headache or vision changes\n• High fever\n• Sudden swelling\n• Reduced baby movement\n• Severe pain\n\n💡 When in doubt, it's always better to call your doctor. Your health and your baby's safety are the top priority! 💗"
+            },
+            {
+                keywords: ['thank','thanks','thank you','helpful','great','awesome','good job'],
+                reply: "You're very welcome! 💗\n\nRemember, I'm always here whenever you have questions. Taking care of yourself is taking care of your baby too! 🌸\n\nStay healthy and feel free to ask anytime! 😊"
+            },
+            {
+                keywords: ['bye','goodbye','see you','exit','take care'],
+                reply: "Take care and stay healthy! 🌸\n\nRemember:\n• Attend your scheduled checkups\n• Monitor your health data regularly\n• Don't hesitate to reach out if you need help\n\nWishing you and your baby all the best! 💗👶"
+            }
+        ];
+
+        const fallbackResponses = [
+            "I'm sorry, I didn't quite understand that. 😊\n\nI can help you with:\n• Pregnancy symptoms\n• Nutrition and diet\n• Exercise during pregnancy\n• Baby development\n• Warning signs\n• Appointments\n• Blood pressure & blood sugar\n• Sleep tips\n• Stress management\n\nTry asking something related to any of these topics!",
+            "Hmm, I'm not sure about that. 🤔\n\nTry asking me about early pregnancy symptoms, what foods to eat, exercise safety, warning signs, or how to book an appointment. I'm here to support your pregnancy journey! 💗",
+            "I didn't catch that, but I'm here to help! 😊\n\nYou can ask me about your health, diet, baby development, or appointments. What would you like to know?"
+        ];
+
+        let fallbackIndex = 0;
+
+        function getBotReply(message) {
+            const lower = message.toLowerCase();
+            for (const entry of responses) {
+                for (const keyword of entry.keywords) {
+                    if (lower.includes(keyword)) return entry.reply;
+                }
+            }
+            const fb = fallbackResponses[fallbackIndex % fallbackResponses.length];
+            fallbackIndex++;
+            return fb;
+        }
+
+        function getTime() {
+            const now = new Date();
+            return now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+        }
+
+        function addMessage(sender, text) {
+            const div = document.createElement('div');
+            div.className = `message ${sender === 'You' ? 'user' : 'bot'}`;
+            div.innerHTML = `<div class="message-content">${text.replace(/\n/g,'<br>')}<div class="message-time">${getTime()}</div></div>`;
+            chatbox.appendChild(div);
+            chatbox.scrollTop = chatbox.scrollHeight;
+            return div;
+        }
+
+        function sendSuggestion(text) { userInput.value = text; sendBtn.click(); }
+
+        sendBtn.addEventListener('click', () => {
+            const message = userInput.value.trim();
+            if (!message) return;
+            addMessage("You", message);
+            userInput.value = "";
+            sendBtn.disabled = true;
+            const typingDiv = addMessage("Bot", "<span class='typing'>Typing...</span>");
+            setTimeout(() => {
+                const reply = getBotReply(message);
+                typingDiv.querySelector('.message-content').innerHTML = `${reply.replace(/\n/g,'<br>')}<div class="message-time">${getTime()}</div>`;
+                chatbox.scrollTop = chatbox.scrollHeight;
+                sendBtn.disabled = false;
+                userInput.focus();
+            }, 600);
+        });
+
+        userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendBtn.click(); });
+
+        window.addEventListener('load', () => {
+            setTimeout(() => addMessage("Bot",
+                "Hello! 👋 I'm your Maternity Support Assistant.\n\nI can answer questions about:\n• Pregnancy symptoms & health\n• Nutrition and diet\n• Exercise & wellness\n• Baby development\n• Warning signs\n• Appointments & care\n• Blood pressure & blood sugar\n• Stress management\n\nHow can I help you today? 🌸"
+            ), 500);
+        });
+    </script>
+</body>
+</html>

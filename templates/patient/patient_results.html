@@ -1,0 +1,16 @@
+<h2>Health Report for {{ username }}</h2>
+<ul>
+  <li>Age: {{ age }}</li>
+  <li>Blood Pressure: {{ systolic }}/{{ diastolic }}</li>
+  <li>Blood Sugar Level: {{ bs }}</li>
+  <li>Body Temperature: {{ bodytemp }} °C</li>
+  <li>Heart Rate: {{ heartrate }}</li>
+  <li><strong>Risk Level: {{ risk_level }}</strong></li>
+</ul>
+
+<h3>Suggestions & Precautions</h3>
+<ul>
+  {% for suggestion in suggestions %}
+  <li>{{ suggestion }}</li>
+  {% endfor %}
+</ul>

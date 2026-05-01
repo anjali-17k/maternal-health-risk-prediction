@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Analytics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: #0f172a;
+            min-height: 100vh;
+            padding: 32px 24px;
+            color: white;
+        }
+
+        .page-header {
+            max-width: 90%;
+            margin: 0 auto 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .page-header h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.8rem;
+        }
+
+        .page-header p { color: #64748b; font-size: 0.88rem; margin-top: 3px; }
+
+        .btn-back {
+            padding: 9px 18px;
+            border-radius: 10px;
+            font-size: 0.83rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: #1e293b;
+            color: #94a3b8;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-back:hover { background: #334155; color: white; }
+
+        .stats-grid {
+            max-width:90%;
+            margin: 0 auto 28px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+        }
+
+        .stat-card {
+            background: #1e293b;
+            border-radius: 14px;
+            padding: 22px 20px;
+            border: 1px solid #334155;
+        }
+
+        .stat-card .label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #64748b;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .stat-card .value {
+            font-family: 'DM Serif Display', serif;
+            font-size: 2.4rem;
+            line-height: 1;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card .sub {
+            font-size: 0.78rem;
+            color: #475569;
+        }
+
+        .v-clinics { color: #f59e0b; }
+        .v-patients { color: #f472b6; }
+        .v-doctors { color: #34d399; }
+        .v-appts { color: #60a5fa; }
+
+        .appt-breakdown {
+            max-width: 90%;
+            margin: 0 auto 28px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+        }
+
+        .appt-card {
+            background: #1e293b;
+            border-radius: 14px;
+            padding: 18px 20px;
+            border: 1px solid #334155;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .appt-icon {
+            width: 54px; height: 54px;
+            border-radius: 12px;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .appt-card .a-value {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.8rem;
+            line-height: 1;
+        }
+
+        .appt-card .a-label {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: 8px;
+        }
+
+        .charts-grid {
+            max-width: 90%;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .chart-card {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #334155;
+        }
+
+        .chart-card h3 {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 28px;
+        }
+
+        canvas { max-height: 260px; }
+
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .appt-breakdown { grid-template-columns: 1fr; }
+            .charts-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-header">
+        <div>
+            <h1>📊 System Analytics</h1>
+            <p>Real-time overview of the Maternal Health Platform</p>
+        </div>
+        <a href="{{ url_for('dashboard') }}" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Dashboard
+        </a>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="label"><i class="fas fa-hospital"></i> Hospitals</div>
+            <div class="value v-clinics">{{ total_clinics }}</div>
+            <div class="sub">Registered facilities</div>
+        </div>
+        <div class="stat-card">
+            <div class="label"><i class="fas fa-baby"></i> Patients</div>
+            <div class="value v-patients">{{ total_patients }}</div>
+            <div class="sub">Registered patients</div>
+        </div>
+        <div class="stat-card">
+            <div class="label"><i class="fas fa-user-md"></i> Doctors</div>
+            <div class="value v-doctors">{{ total_doctors }}</div>
+            <div class="sub">Registered doctors</div>
+        </div>
+        <div class="stat-card">
+            <div class="label"><i class="fas fa-calendar-alt"></i> Appointments</div>
+            <div class="value v-appts">{{ total_appointments }}</div>
+            <div class="sub">Total across all clinics</div>
+        </div>
+    </div>
+
+ 
+    <div class="appt-breakdown">
+        <div class="appt-card">
+            <div class="appt-icon" style="background:rgba(52,211,153,0.15);">✅</div>
+            <div>
+                <div class="a-value" style="color:#34d399;">{{ finished_appointments }}</div>
+                <div class="a-label">Successful Consultations</div>
+            </div>
+        </div>
+        <div class="appt-card">
+            <div class="appt-icon" style="background:rgba(251,191,36,0.15);">⏳</div>
+            <div>
+                <div class="a-value" style="color:#fbbf24;">{{ pending_appointments }}</div>
+                <div class="a-label">Pending Appointments</div>
+            </div>
+        </div>
+        <div class="appt-card">
+            <div class="appt-icon" style="background:rgba(96,165,250,0.15);">📋</div>
+            <div>
+                <div class="a-value" style="color:#60a5fa;">{{ confirmed_appointments }}</div>
+                <div class="a-label">Confirmed Appointments</div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="charts-grid">
+        <div class="chart-card">
+            <h3>Appointments per Hospital</h3>
+            <canvas id="clinicChart"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3>Patient Risk Distribution</h3>
+            <canvas id="riskChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        const clinicNames = {{ clinic_names | tojson }};
+        const clinicCounts = {{ clinic_counts | tojson }};
+        const riskLabels = {{ risk_labels | tojson }};
+        const riskCounts = {{ risk_counts | tojson }};
+
+        Chart.defaults.color = '#64748b';
+        Chart.defaults.borderColor = '#1e293b';
+
+        new Chart(document.getElementById('clinicChart'), {
+            type: 'bar',
+            data: {
+                labels: clinicNames,
+                datasets: [{
+                    label: 'Appointments',
+                    data: clinicCounts,
+                    backgroundColor: 'rgba(245,158,11,0.7)',
+                    borderColor: '#f59e0b',
+                    borderWidth: 1,
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { color: '#1e293b' }, ticks: { color: '#64748b' } },
+                    y: { grid: { color: '#263548' }, ticks: { color: '#64748b' } }
+                }
+            }
+        });
+
+        const riskColors = {
+            'High Risk': 'rgba(239,68,68,0.7)',
+            'Moderate Risk': 'rgba(251,191,36,0.7)',
+            'Low Risk': 'rgba(52,211,153,0.7)'
+        };
+
+        new Chart(document.getElementById('riskChart'), {
+            type: 'doughnut',
+            data: {
+                labels: riskLabels,
+                datasets: [{
+                    data: riskCounts,
+                    backgroundColor: riskLabels.map(l => riskColors[l] || 'rgba(148,163,184,0.7)'),
+                    borderWidth: 2,
+                    borderColor: '#0f172a'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { color: '#94a3b8', padding: 16, font: { size: 12 } }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Profile</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-image: url("/static/images/14.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 32px 24px;
+        }
+
+        .header {
+            max-width: 600px;
+            margin: 0 auto 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .header h1 { 
+            font-family: 'DM Serif Display', serif; 
+            font-size: 1.9rem; 
+            color: #004d40; 
+        }
+
+        .header p  { 
+            color: #00796b; 
+            font-size: 0.88rem; 
+            margin-top: 4px; 
+        }
+
+        .card {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 18px;
+            padding: 36px;
+            box-shadow: 0 4px 20px rgba(0,77,64,0.08);
+            border: 1.5px solid #e0f2f1;
+        }
+
+        .avatar {
+            width: 80px; 
+            height: 80px;
+            border-radius: 50%;
+            background: #e0f2f1;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            font-size: 32px;
+            margin: 0 auto 20px;
+        }
+
+        .username-display {
+            text-align: center;
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.5rem;
+            color: #004d40;
+            margin-bottom: 4px;
+        }
+
+        .role-badge {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .role-badge span {
+            display: inline-flex; 
+            align-items: center; 
+            gap: 6px;
+            background: #e0f2f1; 
+            color: #00695c;
+            padding: 4px 14px; 
+            border-radius: 20px;
+            font-size: 0.78rem; 
+            font-weight: 600;
+            border: 1px solid #b2dfdb;
+        }
+
+        .divider { 
+            border: none; 
+            border-top: 1.5px solid #e0f2f1; 
+            margin: 0 0 24px; }
+
+        label {
+            display: block;
+            font-size: 0.78rem; 
+            font-weight: 600;
+            text-transform: uppercase; 
+            letter-spacing: 0.5px;
+            color: #80cbc4; 
+            margin-bottom: 6px;
+        }
+
+        input[type="email"], input[type="password"] {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1.5px solid #e0f2f1;
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.92rem;
+            color: #004d40;
+            margin-bottom: 18px;
+            transition: border 0.2s;
+            outline: none;
+        }
+
+        input:focus { border-color: #80cbc4; }
+
+        .hint { 
+            font-size: 0.78rem; 
+            color: #b2dfdb; 
+            margin-top: -14px; 
+            margin-bottom: 18px; 
+        }
+
+        .btn-save {
+            width: 100%;
+            padding: 13px;
+            background: #009688;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex; align-items: center; 
+            justify-content: center; 
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-save:hover { background: #00796b; transform: translateY(-1px); }
+        
+        .btn-dashboard {
+            width: 100%;
+            padding: 13px;
+            background: #009688;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            margin-top: 15px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex; 
+            text-decoration: none;
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-dashboard:hover { background: #00796b; transform: translateY(-1px); }
+
+        .flash {
+            max-width: 600px; 
+            margin: 0 auto 16px;
+            padding: 12px 18px; 
+            border-radius: 10px;
+            font-size: 0.87rem; 
+            font-weight: 500;
+            background: #e8f5e9; 
+            border: 1.5px solid #a5d6a7; 
+            color: #2e7d32;
+            display: flex; 
+            align-items: center; 
+            gap: 8px;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <h1>My Profile</h1>
+            <p>Doctor Account Settings</p>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="flash"><i class="fas fa-check-circle"></i> {{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="card">
+        <div class="avatar">👨‍⚕️</div>
+        <div class="username-display">Dr. {{ username }}</div>
+        <div class="role-badge"><span><i class="fas fa-stethoscope"></i> Doctor</span></div>
+        <hr class="divider">
+
+        <form method="POST">
+            <label>Email Address</label>
+            <input type="email" name="email" value="{{ email }}" placeholder="your@email.com">
+
+            <label>New Password</label>
+            <input type="password" name="password" placeholder="Leave blank to keep current password">
+            <p class="hint">Only fill this in if you want to change your password.</p>
+
+            <button type="submit" class="btn-save">
+                <i class="fas fa-save"></i> Save Changes
+            </button>
+        </form>
+        <a href="{{ url_for('dashboard') }}" class="btn-dashboard">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+</body>
+</html>

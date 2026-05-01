@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join a Clinic</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-image: url("/static/images/11.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 32px 24px;
+        }
+
+        .page-header {
+            max-width: 90%;
+            margin: 0 auto 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .page-header h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.8rem;
+            color: #004d40;
+        }
+
+        .page-header p { 
+            color: #00796b; 
+            font-size: 0.88rem; 
+            margin-top: 3px; 
+        }
+
+        .btn-back {
+            padding: 9px 18px;
+            border-radius: 10px;
+            font-size: 0.83rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: white;
+            color: #00796b;
+            box-shadow: 0 2px 8px rgba(0,77,64,0.1);
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-back:hover { background: #e0f2f1; color: #004d40; }
+
+        .flash {
+            max-width: 90%;
+            margin: 0 auto 20px;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-size: 0.88rem;
+        }
+
+        .flash.success { 
+            background: #e8f5e9; 
+            color: #2e7d32; 
+            border-left: 4px solid #43a047; }
+
+        .flash.info { 
+            background: #e3f2fd; 
+            color: #1565c0; 
+            border-left: 4px solid #1e88e5; 
+        }
+
+        .card {
+            max-width: 90%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 36px;
+            box-shadow: 0 6px 30px rgba(0,77,64,0.1);
+        }
+
+        .card h2 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.4rem;
+            color: #004d40;
+            margin-bottom: 6px;
+        }
+
+        .card p.sub {
+            color: #80cbc4;
+            font-size: 0.88rem;
+            margin-bottom: 28px;
+        }
+
+        .clinic-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .clinic-option {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 18px;
+            border: 1.5px solid #e0f2f1;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .clinic-option:hover { 
+            border-color: #80cbc4; 
+            background: #f0faf9; 
+        }
+
+        .clinic-option input[type="radio"] 
+        {
+            width: 18px; 
+            height: 18px;
+            accent-color: #009688;
+            flex-shrink: 0;
+        }
+
+        .clinic-option-icon {
+            width: 40px; 
+            height: 40px;
+            background: #e0f2f1;
+            border-radius: 10px;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .clinic-option-text h4 { 
+            font-size: 0.95rem; 
+            font-weight: 600; 
+            color: #004d40; 
+        }
+
+        .clinic-option-text p { 
+            font-size: 0.8rem; 
+            color: #80cbc4; 
+            margin-top: 2px; 
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, #009688, #00796b);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-submit:hover { background: linear-gradient(135deg, #00796b, #004d40); }
+
+        .info-note {
+            background: #e0f2f1;
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 0.82rem;
+            color: #00695c;
+            margin-bottom: 22px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .empty { 
+            text-align: center; 
+            padding: 32px; 
+            color: #80cbc4; 
+        }
+        
+    </style>
+</head>
+<body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for cat, msg in messages %}
+        <div class="flash {{ cat }}">{{ msg }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    <div class="page-header">
+        <div>
+            <h1>Join a Clinic</h1>
+            <p>Select a registered hospital or clinic to request membership</p>
+        </div>
+        <a href="{{ url_for('dashboard') }}" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+    </div>
+
+    <div class="card">
+        <h2>Available Hospitals & Clinics</h2>
+        <p class="sub">Your request will be sent to the clinic for approval before you can see patients.</p>
+
+        <div class="info-note">
+            <i class="fas fa-info-circle" style="margin-top:2px; flex-shrink:0;"></i>
+            You can only be a member of one clinic at a time. To switch, leave your current clinic first.
+        </div>
+
+        {% if clinics %}
+        <form method="POST">
+            <div class="clinic-list">
+                {% for cl in clinics %}
+                <label class="clinic-option">
+                    <input type="radio" name="clinic_id" value="{{ cl[0] }}" required>
+                    <div class="clinic-option-icon">🏥</div>
+                    <div class="clinic-option-text">
+                        <h4>{{ cl[1] }}</h4>
+                        <p><i class="fas fa-map-marker-alt"></i> {{ cl[2] }}</p>
+                    </div>
+                </label>
+                {% endfor %}
+            </div>
+            <button type="submit" class="btn-submit">
+                <i class="fas fa-paper-plane"></i> Send Join Request
+            </button>
+        </form>
+        {% else %}
+            <div class="empty">
+                <i class="fas fa-hospital" style="font-size:2rem; margin-bottom:12px; display:block;"></i>
+                <p>No clinics registered yet. Please check back later.</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

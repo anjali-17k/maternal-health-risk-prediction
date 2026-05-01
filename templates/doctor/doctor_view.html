@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Health Data</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+             background-image: url("/static/images/8.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 70%;
+            margin: 0 auto;
+            background-color: rgba(255, 255, 255, 0.92);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #2c3e50;
+            font-size: 2.2rem;
+            font-weight: 600;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        h2:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            border-radius: 2px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        th {
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: white;
+            font-weight: 600;
+            text-align: left;
+            padding: 15px 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.9rem;
+        }
+
+        td {
+            padding: 14px 20px;
+            border-bottom: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        tr:nth-child(even) {
+            background-color: rgba(236, 240, 241, 0.5);
+        }
+
+        tr:hover {
+            background-color: rgba(52, 152, 219, 0.1);
+            transform: scale(1.01);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .risk-high {
+            background-color: rgba(231, 76, 60, 0.15);
+            font-weight: 600;
+            color: #c0392b;
+            border-radius: 4px;
+            padding: 5px 10px;
+            display: inline-block;
+        }
+
+        .risk-medium {
+            background-color: rgba(241, 196, 15, 0.15);
+            font-weight: 600;
+            color: #d68910;
+            border-radius: 4px;
+            padding: 5px 10px;
+            display: inline-block;
+        }
+
+        .risk-low {
+            background-color: rgba(46, 204, 113, 0.15);
+            font-weight: 600;
+            color: #27ae60;
+            border-radius: 4px;
+            padding: 5px 10px;
+            display: inline-block;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: white;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .container {padding: 20px;}
+            h2 {font-size: 1.8rem;}
+            table {font-size: 0.85rem;}
+            th, td {padding: 10px;}
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Patient Health Data</h2>
+        <table>
+            <tr>
+                <th>Username</th>
+                <th>Age</th>
+                <th>Systolic</th>
+                <th>Diastolic</th>
+                <th>BS</th>
+                <th>Body Temp</th>
+                <th>Heart Rate</th>
+                <th>Email</th>
+                <th>Risk Level</th>
+            </tr>
+            {% for p in patients %}
+            <tr>
+                <td>{{ p.username }}</td>
+                <td>{{ p.age }}</td>
+                <td>{{ p.systolic }}</td>
+                <td>{{ p.diastolic }}</td>
+                <td>{{ p.bs }}</td>
+                <td>{{ p.bodytemp }}</td>
+                <td>{{ p.heartrate }}</td>
+                <td>{{ p.email }}</td>
+                <td>
+                    {% if p.risk_level == 'High Risk' %}
+                        <span class="risk-high">High Risk</span>
+                    {% elif p.risk_level == 'Moderate Risk' %}
+                        <span class="risk-medium">Moderate Risk</span>
+                    {% else %}
+                        <span class="risk-low">{{ p.risk_level }}</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <div style="text-align: center;">
+            <a href="{{ url_for('dashboard') }}" class="back-btn">&#8592; Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>

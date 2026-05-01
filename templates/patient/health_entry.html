@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Health Data Form</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-image: url("/static/images/6.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  .back-btn {
+    display: block; 
+    width: 100%; 
+    padding: 13px; 
+    text-align: center;
+    border-radius: 9px; 
+    background: linear-gradient(to right, #ACB6E5, #74ebd5);
+    color: white; 
+    font-size: 1rem; 
+    font-weight: 700; 
+    text-decoration: none;
+    margin-top: 10px; 
+    letter-spacing: 0.5px; 
+    box-sizing: border-box;
+    transition: 0.3s;
+  }
+  
+  .back-btn:hover {
+     background: linear-gradient(to right, #74ebd5, #ACB6E5);
+    transform: scale(1.02);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  }
+
+  form {
+    background: rgba(255, 255, 255, 0.97);
+    padding: 25px 35px;
+    border-radius: 18px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    width: 100%;
+    max-width: 700px;
+    animation: slideIn 0.7s ease-out;
+  }
+
+  @keyframes slideIn {
+    0% { transform: translateY(-40px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+
+  form h2 {
+    text-align: center;
+    margin-bottom: 28px;
+    color: #333;
+    font-weight: 700;
+    font-size: 1.4rem;
+    letter-spacing: 0.5px;
+  }
+
+  .field-group {
+    margin-bottom: 18px;
+  }
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 6px;
+    font-size: 0.95rem;
+  }
+
+  label i {
+    width: 20px;
+    text-align: center;
+    color: #74ebd5;
+    font-size: 1rem;
+  }
+
+  input[type="number"],
+  input[type="email"] {
+    width: 100%;
+    padding: 11px 14px;
+    border-radius: 9px;
+    border: 1.5px solid #ddd;
+    transition: 0.3s;
+    outline: none;
+    font-size: 15px;
+    box-sizing: border-box;
+    background: #fafafa;
+  }
+
+  input[type="number"]:focus,
+  input[type="email"]:focus {
+    border-color: #74ebd5;
+    box-shadow: 0 0 10px rgba(116, 235, 213, 0.4);
+    background: #fff;
+  }
+
+  input.invalid {
+    border-color: #e74c3c !important;
+    box-shadow: 0 0 8px rgba(231, 76, 60, 0.3) !important;
+  }
+
+  .error-msg {
+    color: #e74c3c;
+    font-size: 0.78rem;
+    margin-top: 4px;
+    display: none;
+    padding-left: 4px;
+  }
+
+  .temp-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .temp-row input {
+    flex: 1;
+  }
+
+  .toggle-unit {
+    display: flex;
+    border-radius: 9px;
+    overflow: hidden;
+    border: 1.5px solid #ddd;
+    flex-shrink: 0;
+  }
+
+  .toggle-unit button {
+    padding: 11px 13px;
+    border: none;
+    background: #f0f0f0;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #666;
+    transition: all 0.2s;
+  }
+
+  .toggle-unit button.active {
+    background: linear-gradient(to right, #74ebd5, #ACB6E5);
+    color: white;
+  }
+
+  input[type="submit"] {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 9px;
+    background: linear-gradient(to right, #74ebd5, #ACB6E5);
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 10px;
+    letter-spacing: 0.5px;
+  }
+
+  input[type="submit"]:hover {
+    background: linear-gradient(to right, #ACB6E5, #74ebd5);
+    transform: scale(1.02);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  }
+
+  #toast {
+    display: none;
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #e74c3c;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+    z-index: 999;
+    animation: fadeToast 0.3s ease;
+  }
+  @keyframes fadeToast { from { opacity:0; bottom:10px; } to { opacity:1; bottom:30px; } }
+</style>
+</head>
+<body>
+
+<form method="POST" id="healthForm" onsubmit="return validateForm()">
+  <h2><i class="fas fa-heartbeat" style="color:#74ebd5; margin-right:8px;"></i>Health Data Form</h2>
+
+  <!--Age-->
+  <div class="field-group">
+    <label><i class="fas fa-user"></i> Age</label>
+    <input name="age" id="age" type="number" required>
+    <div class="error-msg" id="err-age">Age must be between 10 and 100.</div>
+  </div>
+
+  <!--Systolic-->
+  <div class="field-group">
+    <label><i class="fas fa-arrow-up"></i> Systolic BP</label>
+    <input name="systolic" id="systolic" type="number" required>
+    <div class="error-msg" id="err-systolic">Systolic must be between 0 and 400.</div>
+  </div>
+
+  <!--Diastolic-->
+  <div class="field-group">
+    <label><i class="fas fa-arrow-down"></i> Diastolic BP</label>
+    <input name="diastolic" id="diastolic" type="number" required>
+    <div class="error-msg" id="err-diastolic">Diastolic must be between 0 and 300.</div>
+  </div>
+
+  <!--Blood Sugar-->
+  <div class="field-group">
+    <label><i class="fas fa-tint"></i> Blood Sugar (BS)</label>
+    <input name="bs" id="bs" type="number" step="0.1" required>
+    <div class="error-msg" id="err-bs">Blood sugar must be between 1.0 and 50.0.</div>
+  </div>
+
+  <!--Body Temperature-->
+  <div class="field-group">
+    <label><i class="fas fa-thermometer-half"></i> Body Temperature</label>
+    <div class="temp-row">
+      <input id="tempDisplay" type="number" step="0.1" required>
+      <div class="toggle-unit">
+        <button type="button" id="btnF" class="active" onclick="setUnit('F')">°F</button>
+        <button type="button" id="btnC" onclick="setUnit('C')">°C</button>
+      </div>
+    </div>
+  
+    <input type="hidden" name="bodytemp" id="bodytemp">
+    <div class="error-msg" id="err-temp">Please enter a valid body temperature.</div>
+  </div>
+
+  <!--Heart Rate-->
+  <div class="field-group">
+    <label><i class="fas fa-heart"></i> Heart Rate</label>
+    <input name="heartrate" id="heartrate" type="number" required>
+    <div class="error-msg" id="err-heartrate">Heart rate must be between 30 and 300.</div>
+  </div>
+
+  <!--Email-->
+  <div class="field-group">
+    <label><i class="fas fa-envelope"></i> Email</label>
+    <input name="email" id="email" type="email" required>
+    <div class="error-msg" id="err-email">Please enter a valid email address.</div>
+  </div>
+
+  <input type="submit" value="Submit ➜">
+<a href="{{ url_for('dashboard') }}" class="back-btn">
+    <i class="fas fa-arrow-left"></i> Back to Dashboard
+</a>
+</form>
+
+<div id="toast"></div>
+
+<script>
+  let currentUnit = 'F';
+
+  function setUnit(unit) {
+    const val = parseFloat(document.getElementById('tempDisplay').value);
+    currentUnit = unit;
+
+    document.getElementById('btnF').classList.toggle('active', unit === 'F');
+    document.getElementById('btnC').classList.toggle('active', unit === 'C');
+
+    if (!isNaN(val)) {
+      if (unit === 'C') {
+        document.getElementById('tempDisplay').value = ((val - 32) * 5/9).toFixed(1);
+      } else {
+        document.getElementById('tempDisplay').value = ((val * 9/5) + 32).toFixed(1);
+      }
+    }
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    setTimeout(() => t.style.display = 'none', 3000);
+  }
+
+  function setError(id, errId, show) {
+    const input = document.getElementById(id);
+    const err = document.getElementById(errId);
+    if (show) {
+      input.classList.add('invalid');
+      err.style.display = 'block';
+    } else {
+      input.classList.remove('invalid');
+      err.style.display = 'none';
+    }
+  }
+
+  function validateForm() {
+    let valid = true;
+
+    const age = parseFloat(document.getElementById('age').value);
+    if (isNaN(age) || age < 10 || age > 100) { setError('age','err-age',true); valid=false; } else setError('age','err-age',false);
+
+    const sys = parseFloat(document.getElementById('systolic').value);
+    if (isNaN(sys) || sys < 0 || sys > 400) { setError('systolic','err-systolic',true); valid=false; } else setError('systolic','err-systolic',false);
+
+    const dia = parseFloat(document.getElementById('diastolic').value);
+    if (isNaN(dia) || dia < 0 || dia > 300) { setError('diastolic','err-diastolic',true); valid=false; } else setError('diastolic','err-diastolic',false);
+
+    const bs = parseFloat(document.getElementById('bs').value);
+    if (isNaN(bs) || bs < 1.0 || bs > 50.0) { setError('bs','err-bs',true); valid=false; } else setError('bs','err-bs',false);
+
+    const tempRaw = parseFloat(document.getElementById('tempDisplay').value);
+    let tempC;
+    if (currentUnit === 'F') {
+      tempC = (tempRaw - 32) * 5/9;
+      if (isNaN(tempRaw) || tempRaw < 53|| tempRaw > 116) { setError('tempDisplay','err-temp',true); valid=false; }
+      else setError('tempDisplay','err-temp',false);
+    } else {
+      tempC = tempRaw;
+      if (isNaN(tempRaw) || tempRaw < 12 || tempRaw > 48) { setError('tempDisplay','err-temp',true); valid=false; }
+      else setError('tempDisplay','err-temp',false);
+    }
+    let tempF = currentUnit === 'F' ? tempRaw : (tempRaw*9/5)+32;
+    document.getElementById('bodytemp').value = isNaN(tempF) ? '' : tempF.toFixed(2);
+
+    const hr = parseFloat(document.getElementById('heartrate').value);
+    if (isNaN(hr) || hr < 30 || hr > 300) { setError('heartrate','err-heartrate',true); valid=false; } else setError('heartrate','err-heartrate',false);
+
+    const email = document.getElementById('email').value;
+    const emailReg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailReg.test(email)) { setError('email','err-email',true); valid=false; } else setError('email','err-email',false);
+
+    if (!valid) showToast('⚠️ Please fix the errors before submitting.');
+    return valid;
+  }
+</script>
+</body>
+</html>

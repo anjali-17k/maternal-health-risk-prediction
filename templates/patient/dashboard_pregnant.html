@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-image: url("/static/images/4.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 32px 24px;
+        }
+
+        .header {
+            max-width: 90%;
+            margin: 0 auto 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .header-left h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.9rem;
+            color: #880e4f;
+            margin-bottom: 4px;
+        }
+
+        .header-left p { color: #c2185b; font-size: 0.88rem; }
+
+        .btn-logout {
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px;
+            padding: 10px 20px; 
+            border-radius: 12px;
+            background: white; 
+            color: #c62828;
+            border: 1.5px solid #ef9a9a;
+            font-size: 0.85rem; 
+            font-weight: 600;
+            text-decoration: none; 
+            font-family: 'DM Sans', sans-serif;
+            box-shadow: 0 2px 8px rgba(198,40,40,0.08);
+            transition: all 0.2s;
+        }
+        .btn-logout:hover { 
+            background: #ffebee; 
+            border-color: #c62828; 
+            transform: translateY(-1px); 
+        }
+
+        .patient-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: #fce4ec;
+            color: #ad1457;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            border: 1px solid #f48fb1;
+        }
+
+        .dot {
+            width: 7px; height: 7px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        .grid {
+            max-width: 90%;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            text-decoration: none;
+            color: #880e4f;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            box-shadow: 0 3px 16px rgba(136,14,79,0.08);
+            border: 1.5px solid #fce4ec;
+            transition: all 0.25s;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(136,14,79,0.14);
+            border-color: #f48fb1;
+        }
+
+        .card-icon {
+            width: 54px; 
+            height: 54px;
+            border-radius: 14px;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+            background: #fce4ec;
+        }
+
+        .card-text h3 { 
+            font-size: 1rem; 
+            font-weight: 600; 
+            margin-bottom: 4px; 
+        }
+
+        .card-text p  { 
+            font-size: 0.82rem; 
+            color: #f48fb1; 
+            line-height: 1.4; 
+        }
+
+        .card-arrow {
+            margin-left: auto;
+            color: #f48fb1;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .card:hover .card-arrow { 
+            color: #c2185b; 
+            transform: translateX(3px); 
+        }
+
+        .card.notif-card {
+            border-color: #ffd700;
+            background: #fffde7;
+            color: #f57f17;
+            animation: notif-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes notif-pulse {
+            0%, 100% { box-shadow: 0 3px 16px rgba(245,124,0,0.1); }
+            50%       { box-shadow: 0 3px 20px rgba(245,124,0,0.3); }
+        }
+
+        .card.notif-card .card-icon { background: #fff9c4; }
+        .card.notif-card .card-text p { color: #ffb300; }
+        .card.notif-card .card-arrow { color: #ffb300; }
+
+        .notif-badge {
+            position: absolute;
+            top: 12px; 
+            right: 12px;
+            background: #e53935;
+            color: white;
+            font-size: 0.72rem;
+            font-weight: 700;
+            width: 20px; 
+            height: 20px;
+            border-radius: 50%;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+        }
+
+        @media (max-width: 600px) {
+            .grid { grid-template-columns: 1fr; }
+            .header { 
+                flex-direction: column; 
+                align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <div class="patient-badge"><div class="dot"></div> Maternal Health Platform</div>
+            <h1>Welcome, {{ username }}</h1>
+            <p>Your personal pregnancy health dashboard</p>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;">
+            <a href="{{ url_for('patient_profile') }}" class="btn-logout" style="color:#ad1457;border-color:#f48fb1;background:white;">
+                <i class="fas fa-user-cog"></i> My Profile
+            </a>
+            <a href="{{ url_for('logout') }}" class="btn-logout" onclick="return confirm('Are you sure you want to logout?')">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+
+    <div class="grid">
+        <a href="{{ url_for('health_entry') }}" class="card">
+            <div class="card-icon">💓</div>
+            <div class="card-text">
+                <h3>Health Tracker</h3>
+                <p>Log your vitals and get AI risk assessment</p>
+            </div>
+            <i class="fas fa-chevron-right card-arrow"></i>
+        </a>
+
+        <a href="{{ url_for('appointments') }}" class="card">
+            <div class="card-icon">📅</div>
+            <div class="card-text">
+                <h3>Appointments</h3>
+                <p>Book and manage your doctor appointments</p>
+            </div>
+            <i class="fas fa-chevron-right card-arrow"></i>
+        </a>
+
+        <a href="{{ url_for('my_results') }}" class="card">
+            <div class="card-icon">📊</div>
+            <div class="card-text">
+                <h3>Health Results</h3>
+                <p>View your risk levels and health history</p>
+            </div>
+            <i class="fas fa-chevron-right card-arrow"></i>
+        </a>
+
+        <a href="{{ url_for('chatbot') }}" class="card">
+            <div class="card-icon">💬</div>
+            <div class="card-text">
+                <h3>Chatbot Support</h3>
+                <p>Get answers to pregnancy related questions</p>
+            </div>
+            <i class="fas fa-chevron-right card-arrow"></i>
+        </a>
+
+        {% if notif_count and notif_count > 0 %}
+        <a href="{{ url_for('appointments') }}" class="card notif-card">
+            <span class="notif-badge">{{ notif_count }}</span>
+            <div class="card-icon">🔔</div>
+            <div class="card-text">
+                <h3>Appointment Update</h3>
+                <p>{{ notif_count }} appointment(s) confirmed by your doctor</p>
+            </div>
+            <i class="fas fa-chevron-right card-arrow"></i>
+        </a>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Register - {{ role.capitalize() }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-image: url("/static/images/18.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px 20px;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.97);
+            border-radius: 20px;
+            padding: 44px 40px;
+            width: 100%;
+            max-width: 720px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .card-header h2 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 2rem;
+            color: #1a0a0f;
+            margin-bottom: 6px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #c2185b, #f48fb1);
+            color: white;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 7px;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #e8e8e8;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-family: 'DM Sans', sans-serif;
+            background: #fafafa;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        input:focus, select:focus {
+            border-color: #c2185b;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(194,24,91,0.08);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, #c2185b, #e91e8c);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 8px;
+            letter-spacing: 0.3px;
+        }
+
+        .btn:hover {
+            background: linear-gradient(135deg, #ad1457, #d81b8a);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(194,24,91,0.3);
+        }
+
+        .error {
+            background: #fde8ef;
+            color: #c2185b;
+            border-left: 4px solid #c2185b;
+            padding: 11px 14px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+            font-size: 0.9rem;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 22px;
+            font-size: 0.88rem;
+            color: #777;
+        }
+
+        .login-link a {
+            color: #c2185b;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .login-link a:hover { text-decoration: underline; }
+
+        .clinic-note {
+            background: #e8f5e9;
+            border-left: 4px solid #43a047;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 0.82rem;
+            color: #2e7d32;
+            margin-bottom: 20px;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="card-header">
+            <h2>Create Account</h2>
+            <span class="badge">{{ role.replace('_', ' ') }}</span>
+        </div>
+
+        {% if error %}
+        <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" name="username" required placeholder="Choose a unique username">
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" required placeholder="Create a strong password">
+            </div>
+
+            {% if role == 'doctor' %}
+            <div class="clinic-note">
+                <i class="fas fa-info-circle"></i> Select the hospital or clinic you wish to join. Your request will be reviewed for approval.
+            </div>
+            <div class="form-group">
+                <label>Select Hospital / Clinic</label>
+                <select name="clinic_id" required>
+                    <option value="">-- Select a Clinic --</option>
+                    {% for cl in clinics %}
+                    <option value="{{ cl[0] }}">{{ cl[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% endif %}
+
+            <button type="submit" class="btn">Create Account</button>
+<a href="{{ url_for('home') }}" 
+        class="btn" 
+        style="background:linear-gradient(135deg, #e91e8c, #c2185b); 
+        margin-top:12px; 
+        display:block; 
+        text-align:center; 
+        text-decoration:none;">← Back to Home</a>
+        </form>
+
+        <div class="login-link">
+            Already have an account? <a href="{{ url_for('login', role=role) }}">Login here</a>
+        </div>
+    </div>
+</body>
+</html>

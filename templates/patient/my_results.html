@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Health Results</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <style>
+        * { 
+            margin:0; 
+            padding:0; 
+            box-sizing:border-box; 
+            font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; 
+        }
+
+        body {
+            background-image: url("/static/images/3.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height:100vh; 
+            padding:20px; 
+            color:#333;
+        }
+
+        .container { 
+            max-width:1200px; 
+            margin:0 auto; 
+            background-color:rgba(255, 255, 255, 0.346); 
+            border-radius:20px; 
+            box-shadow:0 15px 35px rgba(0,0,0,0.2); 
+            padding:40px; 
+            backdrop-filter:blur(10px); 
+            animation:fadeIn 0.8s ease-in-out; 
+        }
+
+        @keyframes fadeIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+        h1 { 
+            text-align:center; 
+            color:#2c3e50; 
+            margin-bottom:30px; 
+            font-size:2.4rem; 
+            position:relative; 
+            padding-bottom:15px; 
+        }
+
+        h1:after { 
+            content:''; 
+            position:absolute; 
+            bottom:0; left:50%; 
+            transform:translateX(-50%); 
+            width:80px; 
+            height:4px; 
+            background:linear-gradient(90deg,#3498db,#2ecc71); 
+            border-radius:2px; }
+
+        /*Latest result*/
+        .health-data { 
+            display:grid; 
+            grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); 
+            gap:16px; 
+            margin-bottom:24px; }
+
+        .data-card { 
+            background:#fff; 
+            border-radius:14px; 
+            width: 100%;
+            padding:18px; 
+            box-shadow:0 4px 14px rgba(0,0,0,0.07); 
+            transition:transform 0.3s,box-shadow 0.3s; 
+            border-left:5px solid #3498db; }
+
+        .data-card:hover { 
+            transform:translateY(-4px); 
+            box-shadow:0 8px 20px rgba(0,0,0,0.11); }
+
+        .data-card strong { 
+            color:#2c3e50; 
+            display:block; 
+            margin-bottom:5px; 
+            font-size:0.8rem; 
+            text-transform:uppercase; 
+            letter-spacing:1px; }
+
+        .data-card p { 
+            font-size:1.15rem; 
+            font-weight:600; 
+            color:#34495e; }
+
+        .risk-container { 
+            text-align:center; 
+            margin:24px 0; 
+            padding:18px; 
+            border-radius:14px; 
+            background:#f8f9fa; }
+
+        .risk-label { 
+            font-size:0.85rem; 
+            color:#777; 
+            margin-bottom:8px; 
+            font-weight:600; 
+            text-transform:uppercase; 
+            letter-spacing:1px; }
+
+        .risk-level { 
+            font-size:1.6rem; 
+            font-weight:bold; 
+            padding:10px 30px; 
+            border-radius:50px;
+            display:inline-block; 
+            box-shadow:0 4px 10px rgba(0,0,0,0.1); }
+
+        .high-risk { background:#ff4d4d; color:white; }
+        .moderate-risk { background:#ff9800; color:white; }
+        .low-risk { background:#4caf50; color:white; }
+
+        .submitted-label { 
+            font-size:0.78rem; 
+            color:#aaa; 
+            margin-top:8px; 
+        }
+
+        .section-title { 
+            color:#2c3e50; 
+            margin:28px 0 16px; 
+            font-size:1.3rem; 
+            display:flex; 
+            align-items:center; 
+            gap:8px; 
+            padding-left:14px; 
+            position:relative; }
+
+        .section-title:before { 
+            content:''; 
+            position:absolute; 
+            left:0; 
+            top:50%; 
+            transform:translateY(-50%); 
+            width:5px; height:70%; 
+            background:linear-gradient(to bottom,#3498db,#2ecc71); 
+            border-radius:3px; }
+
+        .suggestions { 
+            background:#f8f9fa; 
+            border-radius:14px; 
+            padding:22px; 
+            margin-bottom:24px; }
+
+        .suggestions ul { list-style:none; }
+
+        .suggestions li { 
+            padding:11px 14px 11px 40px; 
+            margin-bottom:10px; 
+            background:white; 
+            border-radius:10px; 
+            box-shadow:0 2px 7px rgba(0,0,0,0.05); 
+            position:relative; 
+            transition:transform 0.2s; 
+            font-size:0.92rem; }
+
+        .suggestions li:hover { transform:translateX(5px); }
+
+        .suggestions li:before { 
+            content:'✓'; 
+            position:absolute; 
+            left:14px; top:50%; 
+            transform:translateY(-50%); 
+            color:#2ecc71; 
+            font-weight:bold; 
+            font-size:1.1rem; }
+
+        /*TREND CHART*/
+        .chart-wrap {
+            background: #fff;
+            border-radius: 14px;
+            padding: 22px 20px 16px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.07);
+            margin-bottom: 24px;
+        }
+
+        .chart-tabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+
+        .chart-tab {
+            padding: 6px 16px;
+            border-radius: 20px;
+            border: 1.5px solid #ddd;
+            background: #f8f9fa;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: #555;
+            transition: all 0.2s;
+        }
+
+        .chart-tab.active, .chart-tab:hover {
+            background: linear-gradient(135deg, #3498db, #2ecc71);
+            color: #fff;
+            border-color: transparent;
+        }
+
+        .chart-canvas-wrap { position: relative; height: 240px; }
+
+        .history-table-wrap { 
+            overflow-x:auto; 
+            border-radius:12px; 
+            box-shadow:0 2px 12px rgba(255, 255, 255, 0); }
+
+        table { 
+            width:100%; 
+            border-collapse:collapse; 
+            font-size:0.85rem; 
+        }
+        
+        thead tr { background:linear-gradient(135deg,#3498db,#2ecc71); color:white; }
+        thead th { padding:12px 14px; text-align:left; font-weight:600; white-space:nowrap; }
+        tbody tr { border-bottom:1px solid #f0f0f0; transition: background 0.15s; }
+        tbody tr:last-child { border-bottom:none; }
+        tbody tr:hover { background:#f8f9fa; }
+
+        tbody td { 
+            padding:11px 14px; 
+            color:#444; 
+            white-space:nowrap; }
+
+        .badge { 
+            padding:3px 10px; 
+            border-radius:20px; 
+            font-size:0.73rem; 
+            font-weight:700; }
+
+        .high-badge { 
+            background:#f8d7da; 
+            color:#721c24; }
+
+        .moderate-badge { 
+            background:#fff3cd; 
+            color:#856404; }
+
+        .low-badge { 
+            background:#d4edda; 
+            color:#155724; }
+
+        .no-data { 
+            text-align:center; 
+            padding:36px; 
+            background:#f8f9fa; 
+            border-radius:14px; 
+            font-size:1.1rem; 
+            color:#7f8c8d; 
+            margin-bottom:24px; }
+
+        .btn-row { 
+            display:flex; 
+            gap:12px; 
+            justify-content:center; 
+            flex-wrap:wrap; 
+            margin-top:20px; }
+
+        .back-button { 
+            display:inline-flex; 
+            align-items:center; 
+            gap:7px; padding:11px 28px; 
+            background:linear-gradient(135deg,#3498db,#2980b9); 
+            color:white; 
+            text-decoration:none; 
+            border-radius:30px; 
+            font-weight:bold; 
+            transition:all 0.3s; 
+            box-shadow:0 4px 10px rgba(52,152,219,0.3); }
+
+        .back-button:hover { 
+            transform:translateY(-3px); 
+            box-shadow:0 6px 15px rgba(52,152,219,0.4); }
+
+        .pdf-btn { 
+            display:inline-flex; 
+            align-items:center; 
+            gap:7px; padding:11px 28px; 
+            background:linear-gradient(135deg,#28a745,#20c997); 
+            color:white; 
+            border:none; 
+            border-radius:30px; 
+            font-size:1rem; 
+            font-weight:bold; 
+            cursor:pointer; 
+            transition:all 0.3s; 
+            box-shadow:0 4px 10px rgba(40,167,69,0.3); }
+            
+        .pdf-btn:hover { 
+            transform:translateY(-3px); 
+            box-shadow:0 6px 15px rgba(40,167,69,0.4); }
+
+        @media(max-width:768px) { .container{padding:22px;} h1{font-size:1.8rem;} .health-data{grid-template-columns:1fr 1fr;} }
+        @media(max-width:480px) { .health-data{grid-template-columns:1fr;} }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1><i class="fas fa-chart-line" style="margin-right:10px;color:#3498db;"></i>My Health Results</h1>
+
+    {% if result %}
+        <div class="health-data">
+            <div class="data-card"><strong>Age</strong><p>{{ result.age }} years</p></div>
+            <div class="data-card"><strong>Systolic BP</strong><p>{{ result.systolic }} mmHg</p></div>
+            <div class="data-card"><strong>Diastolic BP</strong><p>{{ result.diastolic }} mmHg</p></div>
+            <div class="data-card"><strong>Blood Sugar</strong><p>{{ result.bs }}</p></div>
+            <div class="data-card"><strong>Body Temperature</strong><p>{{ result.bodytemp }} °F</p></div>
+            <div class="data-card"><strong>Heart Rate</strong><p>{{ result.heartrate }} bpm</p></div>
+        </div>
+
+        <div class="risk-container">
+            <div class="risk-label">Latest Risk Assessment</div>
+            <span class="risk-level {% if result.risk_level=='High Risk' %}high-risk{% elif result.risk_level=='Moderate Risk' %}moderate-risk{% else %}low-risk{% endif %}">
+                {{ result.risk_level }}
+            </span>
+            {% if result.submitted_at %}
+            <div class="submitted-label"><i class="fas fa-clock"></i> Submitted: {{ result.submitted_at }}</div>
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="no-data"><i class="fas fa-inbox" style="font-size:2rem;display:block;margin-bottom:10px;"></i>No health data submitted yet.</div>
+    {% endif %}
+
+    <!--TREND CHART-->
+    {% if history|length >= 2 %}
+    <div class="section-title"><i class="fas fa-chart-area" style="color:#3498db;"></i> Health Trends Over Time</div>
+    <div class="chart-wrap">
+        <div class="chart-tabs">
+            <button class="chart-tab active" onclick="showChart('bp')">Blood Pressure</button>
+            <button class="chart-tab" onclick="showChart('bs')">Blood Sugar</button>
+            <button class="chart-tab" onclick="showChart('hr')">Heart Rate</button>
+            <button class="chart-tab" onclick="showChart('temp')">Body Temp</button>
+        </div>
+        <div class="chart-canvas-wrap">
+            <canvas id="trendChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+    const historyData = {{ history | tojson }};
+    const labels = historyData.map(function(h) {
+        return h.submitted_at ? h.submitted_at.slice(0, 10) : '#' + h.id;
+    }).reverse();
+
+    const datasets = {
+        bp: {
+            label: 'Blood Pressure (mmHg)',
+            datasets: [
+                {
+                    label: 'Systolic',
+                    data: historyData.map(function(h){ return h.systolic; }).reverse(),
+                    borderColor: '#e74c3c',
+                    backgroundColor: 'rgba(231,76,60,0.08)',
+                    tension: 0.4, fill: true, pointRadius: 5, pointHoverRadius: 7
+                },
+                {
+                    label: 'Diastolic',
+                    data: historyData.map(function(h){ return h.diastolic; }).reverse(),
+                    borderColor: '#3498db',
+                    backgroundColor: 'rgba(52,152,219,0.08)',
+                    tension: 0.4, fill: true, pointRadius: 5, pointHoverRadius: 7
+                }
+            ]
+        },
+        bs: {
+            label: 'Blood Sugar',
+            datasets: [
+                {
+                    label: 'Blood Sugar',
+                    data: historyData.map(function(h){ return h.bs; }).reverse(),
+                    borderColor: '#f39c12',
+                    backgroundColor: 'rgba(243,156,18,0.1)',
+                    tension: 0.4, fill: true, pointRadius: 5, pointHoverRadius: 7
+                }
+            ]
+        },
+        hr: {
+            label: 'Heart Rate (bpm)',
+            datasets: [
+                {
+                    label: 'Heart Rate',
+                    data: historyData.map(function(h){ return h.heartrate; }).reverse(),
+                    borderColor: '#e91e63',
+                    backgroundColor: 'rgba(233,30,99,0.08)',
+                    tension: 0.4, fill: true, pointRadius: 5, pointHoverRadius: 7
+                }
+            ]
+        },
+        temp: {
+            label: 'Body Temperature (°F)',
+            datasets: [
+                {
+                    label: 'Body Temp',
+                    data: historyData.map(function(h){ return h.bodytemp; }).reverse(),
+                    borderColor: '#2ecc71',
+                    backgroundColor: 'rgba(46,204,113,0.08)',
+                    tension: 0.4, fill: true, pointRadius: 5, pointHoverRadius: 7
+                }
+            ]
+        }
+    };
+
+    var ctx = document.getElementById('trendChart').getContext('2d');
+    var trendChart = new Chart(ctx, {
+        type: 'line',
+        data: { labels: labels, datasets: datasets.bp.datasets },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: { position: 'top', labels: { font: { size: 12 }, boxWidth: 14 } },
+                tooltip: { backgroundColor: 'rgba(44,62,80,0.9)', padding: 10, cornerRadius: 8 }
+            },
+            scales: {
+                x: {
+                    grid: { color: 'rgba(0,0,0,0.05)' },
+                    ticks: { font: { size: 11 }, maxRotation: 30 }
+                },
+                y: {
+                    grid: { color: 'rgba(0,0,0,0.05)' },
+                    ticks: { font: { size: 11 } }
+                }
+            }
+        }
+    });
+
+    function showChart(type) {
+        trendChart.data.datasets = datasets[type].datasets;
+        trendChart.update();
+        document.querySelectorAll('.chart-tab').forEach(function(t){ t.classList.remove('active'); });
+        event.target.classList.add('active');
+    }
+    </script>
+    {% endif %}
+
+    <div class="section-title"><i class="fas fa-lightbulb" style="color:#f39c12;"></i> Suggestions & Remedies</div>
+    <div class="suggestions">
+        <ul>
+        {% for s in suggestions %}
+            <li>{{ s }}</li>
+        {% endfor %}
+        {% if not suggestions %}<li style="color:#aaa;font-style:italic;">Submit your health data to get personalised suggestions.</li>{% endif %}
+        </ul>
+    </div>
+
+    <!--History-->
+    <div class="section-title"><i class="fas fa-history" style="color:#3498db;"></i> Full Submission History</div>
+    {% if history|length > 1 %}
+    <div class="history-table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Date</th>
+                    <th>Age</th>
+                    <th>Systolic</th>
+                    <th>Diastolic</th>
+                    <th>Blood Sugar</th>
+                    <th>Temp (°F)</th>
+                    <th>Heart Rate</th>
+                    <th>Risk Level</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for h in history %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ h.submitted_at or '—' }}</td>
+                <td>{{ h.age }}</td>
+                <td>{{ h.systolic }}</td>
+                <td>{{ h.diastolic }}</td>
+                <td>{{ h.bs }}</td>
+                <td>{{ h.bodytemp }}</td>
+                <td>{{ h.heartrate }}</td>
+                <td>
+                    <span class="badge {% if h.risk_level=='High Risk' %}high-badge{% elif h.risk_level=='Moderate Risk' %}moderate-badge{% else %}low-badge{% endif %}">
+                        {{ h.risk_level }}
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% elif history|length == 1 %}
+        <p style="font-size:0.85rem;color:#aaa;text-align:center;padding:16px;">Only one submission so far. History will appear here after multiple submissions.</p>
+    {% else %}
+        <p style="font-size:0.85rem;color:#aaa;text-align:center;padding:16px;">No submission history yet.</p>
+    {% endif %}
+
+    <div class="btn-row">
+        <a href="{{ url_for('dashboard') }}" class="back-button"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+        <form action="/download_pdf" method="POST" style="display:inline;">
+            <button type="submit" class="pdf-btn"><i class="fas fa-download"></i> Download PDF Report</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>
